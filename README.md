@@ -9,12 +9,11 @@ app/
 ├── src/
     ├── main/
         ├── java/
-        │   └── group34/
-        │       └── rentify/
-        │           ├── activities/ // Contains Activity classes for UI screens.
-        │           ├── db/         // Contains database-related classes.
-        │           ├── models/     // Contains data model classes representing users and items.
-        │           └── util/       // Contains utility classes and helper functions.
+        │   └── com.seg34.rentify/
+        │       ├── activities/ // Contains Activity classes for UI screens.
+        │       ├── db/         // Contains database-related classes.
+        │       ├── models/     // Contains data model classes representing users and items.
+        │       └── util/       // Contains utility classes and helper functions.
         │
         ├── res/                    // Contains application resources.
             ├── drawable/           // Contains images and icons for the application.
