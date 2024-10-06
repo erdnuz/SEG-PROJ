@@ -1,17 +1,11 @@
 package com.example.rentify.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The Admin class represents an admin user with additional privileges.
  */
-public class Admin extends Account {
-
-    // Static list to store categories shared across all Admin instances
-    private static List<Category> categories = new ArrayList<>(List.of(Category.values())); // Initialize with enum values
-
-    // Constructor
+public class Admin extends User {
     public Admin(String email, String firstName, String lastName) {
         super(email, firstName, lastName);
     }
@@ -20,12 +14,14 @@ public class Admin extends Account {
      * Method to add a new category.
      * @param category the category to add.
      */
-    public static void addCategory(Category category) {
-        if (!categories.contains(category)) {
-            categories.add(category);
+    public boolean addCategory(String category) {
+        // Check if the category can be added through CategoryManager
+        if (CategoryManager.addCategory(category)) {
             System.out.println("Category added: " + category);
+            return true;
         } else {
             System.out.println("Category already exists: " + category);
+            return false;
         }
     }
 
@@ -33,47 +29,41 @@ public class Admin extends Account {
      * Method to remove a category.
      * @param category the category to remove.
      */
-    public static void removeCategory(Category category) {
-        if (categories.size() > 3 && categories.remove(category)) {
+    public boolean removeCategory(String category) {
+        // Check if the category can be removed through CategoryManager
+        if (CategoryManager.removeCategory(category)) {
             System.out.println("Category removed: " + category);
-        } else if (categories.size() <= 3) {
-            System.out.println("Cannot remove category. At least 3 categories must remain.");
+            return true;
         } else {
-            System.out.println("Category not found: " + category);
+            return false; // This could be because of the minimum category rule
         }
     }
 
-    /**
-     * Method to list all categories.
-     * @return the list of categories.
-     */
-    public static List<Category> listCategories() {
-        return new ArrayList<>(categories); // Return a copy of the list
+    public User getUser(int userId) {
+        // DATABASE LOGIC
+        return null; // Placeholder
     }
 
-    /**
-     * Method to manage user accounts (e.g., delete or disable accounts).
-     * @param userAccount the user account to be managed.
-     * @param action the action to perform (delete, disable, or enable).
-     */
-    public void manageUserAccount(Account userAccount, String action) {
+    public boolean manageUserAccount(User user, String action) {
+        long userId = user.getId();
         switch (action.toLowerCase()) {
             case "delete":
-                System.out.println("Deleting user account: " + userAccount.getEmail());
-                // Implement deletion logic here
-                break;
+                //DB logic
+                return false;
             case "disable":
-                System.out.println("Disabling user account: " + userAccount.getEmail());
-                // Implement disable logic here
-                break;
+                //DB logic disable
+                return false;
             case "enable":
-                System.out.println("Enabling user account: " + userAccount.getEmail());
-                // Implement enable logic here
-                break;
+                //DB logic enable
+                return false;
             default:
-                System.out.println("Invalid action: " + action);
-                break;
+                return false;
         }
+    }
+
+    public Post getPost(int listingId) {
+        // DATABASE LOGIC
+        return null; // Placeholder
     }
 
     /**
@@ -81,8 +71,7 @@ public class Admin extends Account {
      * @param postId the ID of the post to delete.
      */
     public void deletePost(int postId) {
-        System.out.println("Deleting post with ID: " + postId);
-        // Implement post deletion logic here
+        // DATABASE LOGIC
     }
 
     @Override
