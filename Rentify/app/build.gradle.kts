@@ -1,9 +1,9 @@
 plugins {
-    alias(libs.plugins.android.application)
     id("com.android.application")
-    id("com.google.gms.google-services")
+    id("com.google.gms.google-services") // Ensure this is included and no version is specified here
 }
 
+// Your android configuration
 android {
     namespace = "com.example.rentify"
     compileSdk = 34
@@ -34,7 +34,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -42,7 +41,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Firebase BOM
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+
+    // Firebase Analytics
     implementation("com.google.firebase:firebase-analytics")
 
+    // Firebase Realtime Database
+    implementation("com.google.firebase:firebase-database")
 }

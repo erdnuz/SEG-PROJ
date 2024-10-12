@@ -4,18 +4,51 @@ package com.example.rentify.models;
  * The User class serves as a base class for different types of user accounts.
  */
 public class User {
-    private static long nextId = 1;
-    private final long id;
-    private String userName;
+    private static long nextId = 0;
+    private final String id;
+    private String email;
     private String firstName;
     private String lastName;
+    private boolean enabled;
 
-    public User(String userName, String firstName, String lastName) {
-        //Check if username is taken DB
+    /**
+     * Method to construct user from id, by fetching user data from database.
+     * @param id the user's id
+     */
+    public User(long id) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("The database has not been connected.");
+    }
+
+    public User(String email, String firstName, String lastName) {
         this.id = nextId++;
-        this.userName = userName;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.enabled = true;
+    }
+
+    /**
+     * Method to enable a user.
+     * @return false if the user is already enabled, true otherwise
+     */
+    public boolean enable() {
+        if (this.enabled) {
+            return false;
+        } 
+        this.enabled == true;
+        return true;
+    }
+
+    /**
+     * Method to disable a user.
+     * @return false if the user is already disabled, true otherwise
+     */
+    public boolean disable() {
+        if (!this.enabled) {
+            return false;
+        } 
+        this.enabled == false;
+        return true;
     }
 
     // Getters
@@ -27,8 +60,8 @@ public class User {
         return firstName + " " + lastName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
     }
 
     // Setters DB implementation missing

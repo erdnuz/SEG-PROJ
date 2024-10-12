@@ -13,65 +13,59 @@ public class Admin extends User {
     /**
      * Method to add a new category.
      * @param category the category to add.
+     * @return true if the category is added successfully, false otherwise
      */
     public boolean addCategory(String category) {
-        // Check if the category can be added through CategoryManager
-        if (CategoryManager.addCategory(category)) {
-            System.out.println("Category added: " + category);
+        if (!Listing.categories.contains(category)) {
+            Listing.categories.add(category);
             return true;
-        } else {
-            System.out.println("Category already exists: " + category);
-            return false;
         }
+        return false;
     }
 
     /**
      * Method to remove a category.
      * @param category the category to remove.
+     * @return true if the category is removed successfully, false otherwise
      */
     public boolean removeCategory(String category) {
-        // Check if the category can be removed through CategoryManager
-        if (CategoryManager.removeCategory(category)) {
-            System.out.println("Category removed: " + category);
-            return true;
-        } else {
-            return false; // This could be because of the minimum category rule
+        if (Listing.categories.size()<4) { //Ensure there are always at least three categories
+            return false;
         }
+        if (Listing.categories.remove(category)) {
+            //Delete all posts from that category
+            throw new UnsupportedOperationException("Database has not been connected.");
+        }
+        return false;
     }
 
-    public User getUser(int userId) {
-        // DATABASE LOGIC
-        return null; // Placeholder
-    }
-
+    /**
+     * Method to manage a users account.
+     * @param user the user to manage
+     * @param action the action to perform on user ("enable", "disable", or "delete")
+     * @return true if the action is executed successfully, false otherwise
+     */
     public boolean manageUserAccount(User user, String action) {
         long userId = user.getId();
         switch (action.toLowerCase()) {
             case "delete":
-                //DB logic
-                return false;
+                throw new UnsupportedOperationException("Database not connected.");
             case "disable":
-                //DB logic disable
-                return false;
+                return user.disable();
             case "enable":
-                //DB logic enable
-                return false;
+                return user.enable();
             default:
                 return false;
         }
     }
 
-    public Post getPost(int listingId) {
-        // DATABASE LOGIC
-        return null; // Placeholder
-    }
-
     /**
-     * Method to delete a post (content moderation).
-     * @param postId the ID of the post to delete.
+     * Method to delete a listing (content moderation).
+     * @param listingId the ID of the listing to delete.
+     * @return true if the operation is successful, false otherwise
      */
-    public void deletePost(int postId) {
-        // DATABASE LOGIC
+    public boolean deleteListing(int listingId) {
+        throw new UnsupportedOperationException("Database not connected.");
     }
 
     @Override
