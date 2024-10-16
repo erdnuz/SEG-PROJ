@@ -4,3 +4,4 @@ This project file contains the files that correspond to the first deliverable. T
 
 Issues: AndroidManifest.xml has attributes "not allowed" when team members open project in AS
 Issues: activity_Main.xml & activity_profile.xml: "design editor is unavailable until next gradle sync."
+Issues: activity_main.xml ? activity_profile.xml: "Failed to initialize editor."
