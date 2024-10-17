@@ -1,0 +1,54 @@
+//User classes
+class User {
+  int userId;
+  String firstName;
+  String lastName;
+}
+
+class Admin {
+  isA User;
+}
+
+class Renter {
+  isA User;
+}
+
+class Lessor {
+  isA User;
+  1 -- * Listing listings;
+}
+
+// Listing class
+class Listing {
+  int listingId;
+  String description;
+  int price;
+  boolean hourlyPrice; //Price is charged hourly if true, daily otherwise
+  1 -- * Request requests;
+  1 -- * AvailabilitySlot availabilitySlots;
+}
+
+// Association classes
+class Request {
+  int requestId;
+  String message;
+  String status;
+}
+
+class Review {
+  int date;
+  int rating;
+  String message;
+  
+  * -- 1 Renter from;
+  * -- 1 Listing to;
+}
+
+class AvailabilitySlot {
+  int start;
+  int end;
+}
+
+
+
+
