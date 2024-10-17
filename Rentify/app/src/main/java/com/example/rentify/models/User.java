@@ -5,7 +5,7 @@ package com.example.rentify.models;
  */
 public class User {
     private static long nextId = 0;
-    private final String id;
+    private final long id;
     private String email;
     private String firstName;
     private String lastName;
@@ -35,7 +35,7 @@ public class User {
         if (this.enabled) {
             return false;
         } 
-        this.enabled == true;
+        this.enabled = true;
         return true;
     }
 
@@ -47,7 +47,7 @@ public class User {
         if (!this.enabled) {
             return false;
         } 
-        this.enabled == false;
+        this.enabled = false;
         return true;
     }
 
@@ -64,12 +64,6 @@ public class User {
         return email;
     }
 
-    // Setters DB implementation missing
-    public void setUserName(String userName) {
-        //update in db
-        this.userName = userName;
-    }
-
     public void setName(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -78,6 +72,6 @@ public class User {
 
 
     public String toString() {
-        return "ID: " + id + "\nName: " + getName() + "\nUsername: " + userName;
+        return "ID: " + id + "\nName: " + getName() + "\nEmail: " + email;
     }
 }
