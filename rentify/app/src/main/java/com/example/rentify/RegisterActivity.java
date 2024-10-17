@@ -1,5 +1,9 @@
 package com.example.rentify;
 
+/* Commenting here for the commit message
+
+ */
+
 public class RegistrationActivity extends AppCompatActivity {
     private Button mRegister;
     private EditText mEmail;
