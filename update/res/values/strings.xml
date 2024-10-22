@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Rentify</string>
+    <string name="username">Username</string>
+    <string name="login_signup">Login / Sign Up</string>
+    <string name="name_text">Your Name</string>
+    <string name="username_text">basicusername1</string>
+    <string name="edit_profile_text">Edit Profile</string>
+    <string name="id_text">ID: 120412</string>
+</resources>
