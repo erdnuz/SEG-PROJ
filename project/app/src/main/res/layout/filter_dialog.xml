@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/surface"
+    android:divider="@android:color/darker_gray"
+    android:dividerHeight="1dp">
+
+    <!-- Category Selection Section -->
+<TextView
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Select Category:"
+android:textSize="16sp"
+android:textColor="@color/on_surface"
+    android:layout_marginBottom="8dp" />
+
+<Spinner
+android:id="@+id/categorySpinner"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginBottom="16dp"
+    style="@style/CustomSpinnerStyle" />
+
+
+    <!-- Availability Dates Section -->
+<TextView
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Select Availability Dates:"
+android:textSize="16sp"
+android:textColor="@color/on_surface"
+    android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/startDateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primary"
+            android:padding="12dp"
+            android:text="Select Start Date"
+            android:textColor="@color/on_primary" />
+
+        <Button
+            android:id="@+id/endDateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primary"
+            android:padding="12dp"
+            android:text="Select End Date"
+            android:textColor="@color/on_primary" />
+    </LinearLayout>
+
+
+    <Button
+    android:id="@+id/applyFilterButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Apply Filters"
+    android:backgroundTint="@color/secondary"
+    android:textColor="@color/on_secondary"
+    android:padding="12dp" />
+
+    </LinearLayout>

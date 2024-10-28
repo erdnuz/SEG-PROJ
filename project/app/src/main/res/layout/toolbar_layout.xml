@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="@color/primary"
+android:orientation="horizontal"
+android:padding="16dp">
+
+<!-- Logo on the left -->
+<ImageView
+    android:id="@+id/toolbarLogo"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_gravity="left"
+    android:src="@drawable/logo" />
+
+<!-- Spacer to push buttons to the right -->
+<Space
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1" />
+
+<!-- Requests ImageView aligned to the right -->
+<ImageView
+    android:id="@+id/toolbarRequests"
+    android:layout_width="45dp"
+    android:layout_height="45dp"
+    android:src="@drawable/requests_icon" />
+
+<!-- Profile ImageView aligned to the right -->
+<ImageView
+    android:id="@+id/toolbarAvatar"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_marginStart="20dp"
+    android:adjustViewBounds="true"
+    android:background="@drawable/circular_outline"
+    android:clipToOutline="true"
+    android:scaleType="centerCrop"
+    android:src="@drawable/def_avatar" />
+</LinearLayout>

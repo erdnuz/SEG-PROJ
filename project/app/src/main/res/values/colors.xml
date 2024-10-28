@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary colors -->
+    <color name="primary">#6200EE</color>         <!-- Purple 500 -->
+    <color name="primary_dark">#3700B3</color>    <!-- Purple 700 -->
+    <color name="primary_light">#BB86FC</color>   <!-- Purple 200 -->
+
+    <!-- Secondary colors -->
+    <color name="secondary">#03DAC6</color>       <!-- Teal 200 -->
+    <color name="secondary_dark">#018786</color>  <!-- Teal 700 -->
+    <color name="secondary_light">#66FFF9</color> <!-- Lighter Teal -->
+
+    <!-- Background and surface colors -->
+    <color name="background">#F5F5F5</color>      <!-- Light background gray -->
+    <color name="surface">#FFFFFF</color>         <!-- White surface for cards and containers -->
+
+    <!-- Error color -->
+    <color name="error">#B00020</color>           <!-- Red for error states -->
+
+    <!-- Text colors -->
+    <color name="on_primary">#FFFFFF</color>      <!-- Text on primary color -->
+    <color name="on_secondary">#000000</color>    <!-- Text on secondary color -->
+    <color name="on_background">#000000</color>   <!-- Text on background -->
+    <color name="on_surface">#000000</color>      <!-- Text on surface -->
+    <color name="on_error">#FFFFFF</color>        <!-- Text on error background -->
+
+    <!-- Accent colors -->
+    <color name="accent_red">#FF5252</color>      <!-- Light red for highlights -->
+    <color name="accent_blue">#448AFF</color>     <!-- Light blue for action buttons -->
+    <color name="accent_green">#4CAF50</color>    <!-- Green for success messages -->
+
+    <!-- Shades of gray -->
+    <color name="gray">#6E6E6E</color>           <!-- Standard gray for borders or subtle elements -->
+    <color name="light_gray">#BDBDBD</color>     <!-- Lighter gray for secondary text or disabled elements -->
+    <color name="dark_gray">#424242</color>      <!-- Darker gray for more emphasis on text -->
+
+    <!-- Additional colors -->
+    <color name="warning_yellow">#FFEB3B</color>  <!-- Yellow for warnings -->
+    <color name="info_blue">#2196F3</color>       <!-- Blue for information messages -->
+
+    <!-- Neutral colors -->
+    <color name="neutral_light">#ECEFF1</color>   <!-- Light neutral color for backgrounds -->
+    <color name="neutral_dark">#37474F</color>    <!-- Dark neutral for subtle elements -->
+</resources>
