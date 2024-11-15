@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class Admin extends User {
     private DatabaseHelper db = DatabaseHelper.getInstance();
 
-    public Admin(String email, String phone, String firstName, String lastName, boolean enabled) {
-        super(email, phone, firstName, lastName, enabled);
+    public Admin(String id, String email, String phone, String firstName, String lastName, boolean enabled) {
+        super(id, email, phone, firstName, lastName, enabled);
     }
 
     /**

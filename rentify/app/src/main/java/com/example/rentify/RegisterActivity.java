@@ -1,10 +1,18 @@
 package com.example.rentify;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.annotation.NonNull;
+import java.util.Map;
+
 /* Commenting here for the commit message
 
  */
 
-public class RegistrationActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     private Button mRegister;
     private EditText mEmail;
     private EditText mPassword;
@@ -25,7 +33,7 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -54,11 +62,11 @@ public class RegistrationActivity extends AppCompatActivity {
                 String name = mName.getText().toString();
 
                 mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(RegistrationActivity.this, "Sign up error", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Sign up error", Toast.LENGTH_SHORT).show();
                                 } else {
                                     String userId = mAuth.getCurrentUser().getUid();
                                     DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference()

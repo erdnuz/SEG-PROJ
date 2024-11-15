@@ -21,8 +21,8 @@ public class Listing {
 		this.id = id;
 		this.category = category;
 		this.hourly = hourly;
-		this.description = description;
 		this.title = title;
+		this.description = description;
 		this.lessor = lessor;
 		this.price = price;
 	}
@@ -42,12 +42,46 @@ public class Listing {
 		listingMap.put("id", id);
 		listingMap.put("category", category);
 		listingMap.put("hourly", hourly);
-		listingMap.put("description", description);
 		listingMap.put("title", title);
+		listingMap.put("description", description);
 		listingMap.put("lessor", lessor.getId());
 		listingMap.put("price", price);
+		listingMap.put("available", true);
+		listingMap.put("availableFrom", null);
+		listingMap.put("availableUntil", null);
+		listingMap.put("requests", new ArrayList<>()); // Deliverable 4 feature
+
+		// Additional feature for the +10 bonus on Deliverable 3
+		listingMap.put("images", new ArrayList<>());
+
+		/*
+		** POSSIBLE additional features for the +15 bonus on Deliverable 4 **
+		listingMap.put("reviews", new ArrayList<>());
+		listingMap.put("rating", 0);
+		listingMap.put("numReviews", 0);
+		listingMap.put("comments", new ArrayList<>());
+		listingMap.put("likes", 0);
+		listingMap.put("dislikes", 0);
+		listingMap.put("views", 0);
+		listingMap.put("createdAt", null);
+		listingMap.put("updatedAt", null);
+		listingMap.put("deletedAt", null);
+		listingMap.put("deleted", false);
+		listingMap.put("deletedBy", null);
+		listingMap.put("deletedReason", null);
+		listingMap.put("deletedAt", null);
+		listingMap.put("deletedBy", null);
+		listingMap.put("deletedReason", null);
+		listingMap.put("deletedAt", null);
+		listingMap.put("deletedBy", null);
+		listingMap.put("deletedReason", null);
+
+		 */
+
 
 		return listingMap;
+
 	}
+
 }
 

@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public class Renter extends User {
 
     // Constructor
-    public Renter(String email, String phone, String firstName, String lastName, boolean enabled) {
-        super(email, phone, firstName, lastName, enabled);
+    public Renter(String id, String email, String phone, String firstName, String lastName, boolean enabled) {
+        super(id, email, phone, firstName, lastName, enabled);
     }
 
     /**

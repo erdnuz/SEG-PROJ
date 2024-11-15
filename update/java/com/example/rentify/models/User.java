@@ -17,7 +17,8 @@ public abstract class User {
     public User() {
     }
 
-    public User(String email, String phone, String firstName, String lastName, boolean enabled) {
+    public User(String id,String email, String phone, String firstName, String lastName, boolean enabled) {
+        this.id = id;
         this.email = email;
         this.phone = phone;
         this.firstName = firstName;

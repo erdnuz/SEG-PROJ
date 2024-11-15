@@ -12,8 +12,8 @@ public class Lessor extends User {
         super();
     }
 
-    public Lessor(String email, String phone, String firstName, String lastName, boolean enabled) {
-        super(email, phone, firstName, lastName, enabled);
+    public Lessor(String id, String email, String phone, String firstName, String lastName, boolean enabled) {
+        super(id, email, phone, firstName, lastName, enabled);
     }
 
     /**
