@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+// This activity serves the purpose to allow user to select either between logging in and registering with the help of Firebase
+
 public class ChooseActivity extends AppCompatActivity {
 
     private Button mLogin, mRegister;
