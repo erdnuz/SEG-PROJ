@@ -1,6 +1,5 @@
 package com.example.rentify;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,18 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -32,25 +27,20 @@ import com.example.rentify.models.Admin;
 import com.example.rentify.models.Category;
 import com.example.rentify.models.Listing;
 import com.example.rentify.util.QueryCallback;
-import com.example.rentify.models.Slot;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class ListingViewHome extends BaseActivity implements ListingAdapter.OnListingClickListener, CategoryAdapter.CategoryClickListener {
-    private Listing listingReq;
     private static final String TAG = "ListingViewHome"; // For logging
-    private List<Category> categories;
-    private CategoryAdapter categoryAdapter, categoryAdapterFilter;
+    private List<Category> categories, filterCategories;
+    private CategoryAdapter categoryAdapterManage;
     private ListingAdapter listingAdapter;
+    private ArrayAdapter<Category> spinnerAdapter;
     private List<Listing> listings = new ArrayList<>();
     private List<Listing> allListings = new ArrayList<>();
-    private Long startDate, endDate, filterStart, filterEnd;
-    private Button startDateButton, endDateButton, getAllUsers;
-    private String filterCategory;
+    private Button getAllUsers;
+    private Category dummy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,36 +73,50 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
             return insets;
         });
 
-        // Initialize RecyclerView for listings
-        RecyclerView listingsRecyclerView = findViewById(R.id.listingsRecyclerView);
-        listingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize listings and adapter with an empty list
         listings = new ArrayList<>();
         RecyclerView recyclerView = findViewById(R.id.listingsRecyclerView);
         listingAdapter = new ListingAdapter(listings, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(listingAdapter);
-        listingsRecyclerView.setAdapter(listingAdapter);
 
-        // Fetch all listings and update the adapter on success
+        dummy = new Category("Any category", "");
+
+
+
+        categories = new ArrayList<>();
+        filterCategories = new ArrayList<>();
+        Spinner categorySpinner = findViewById(R.id.categorySpinner);
+        spinnerAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                filterCategories
+        );
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(spinnerAdapter);
+
+        fetchCategories();
         updateListingList();
 
-        Button searchButton = findViewById(R.id.searchButton);
-        SearchView search = findViewById(R.id.search);
-        Slot slot;
-        if (startDate!=null&&endDate!=null) {
-            slot = new Slot(startDate, endDate);
-        } else {slot=null;}
-        searchButton.setOnClickListener(v -> {
-            Log.d(TAG, "Getting search query");
-            String query = search.getQuery().toString().trim();
-            listings = db.filterListings(allListings, filterCategory, slot, query);
-            listingAdapter.updateList(listings); // Ensure adapter reflects the new list
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Retrieve the selected category
+                Category selectedCategory = (Category) parent.getItemAtPosition(position);
+
+                // Log the selected category and update the listing
+                Log.d(TAG, "Selected category: " + selectedCategory.getName());
+                selectCategory(selectedCategory);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle cases where no category is selected (optional)
+                Log.d(TAG, "No category selected.");
+            }
         });
 
-        // Filter button click listener
-        ImageView filterButton = findViewById(R.id.filter);
-        filterButton.setOnClickListener(v -> showFilterDialog());
 
         getAllUsers.setOnClickListener(v -> {
             Intent intent = new Intent(this, AllUsersActivity.class);
@@ -125,18 +129,18 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
             @Override
             public void onSuccess() {
 
-                listings.clear();
                 allListings = (List<Listing>) results.get("listings");
-                listings.addAll(allListings);
-                Log.d(TAG, "Got listings: "+ listings.size());
-                listingAdapter.notifyDataSetChanged(); // Notify adapter of the change
+
+                listingAdapter.updateList(allListings);
+
+
+                Log.d(TAG, "Got listings: "+ allListings.size()); // Notify adapter of the change
             }
 
             @Override
-            public void onError(Exception err) {
-                listings.clear(); // Clear the data list on error
+            public void onError(Exception err) {// Clear the data list on error
                 Log.e(TAG, "Listing fetch error: " +err);
-                listingAdapter.notifyDataSetChanged(); // Notify adapter of the cleared data
+                listingAdapter.updateList(allListings);// Notify adapter of the cleared data
             }
         });
     }
@@ -156,63 +160,6 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
         updateListingList();
     }
 
-    private void showDatePicker(boolean isStartDate) {
-        final Calendar calendar = Calendar.getInstance();
-
-        // Create a DatePickerDialog limited to today or later
-        DatePickerDialog datePicker = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    calendar.set(year, month, dayOfMonth);
-
-                    // Convert the selected date to YYYYMMDD format only after selection
-                    SimpleDateFormat longFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                    SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
-                    String formattedDate = longFormat.format(calendar.getTime());
-                    long dateAsLong = Long.parseLong(formattedDate);
-
-                    if (isStartDate) {
-                        startDate = dateAsLong;
-                        startDateButton.setText(displayFormat.format(calendar.getTime()));
-                    } else {
-                        endDate = dateAsLong;
-                        endDateButton.setText(displayFormat.format(calendar.getTime()));
-                    }
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-
-        // Set min and max dates directly using milliseconds
-        if (isStartDate) {
-            datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
-            if (endDate != null) {
-                datePicker.getDatePicker().setMaxDate(convertToMillis(endDate));
-            }
-        } else {
-            if (startDate != null) {
-                datePicker.getDatePicker().setMinDate(convertToMillis(startDate));
-            } else {
-                datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
-            }
-        }
-
-        datePicker.show();
-    }
-
-    // Helper to convert YYYYMMDD to milliseconds
-    private long convertToMillis(long yyyymmddDate) {
-        int year = (int) (yyyymmddDate / 10000);
-        int month = (int) ((yyyymmddDate % 10000) / 100) - 1;
-        int day = (int) (yyyymmddDate % 100);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTimeInMillis();
-    }
-
     /**
      * Displays a dialog to manage categories with the ability to add and delete categories.
      */
@@ -230,13 +177,11 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
         Button addCategoryButton = dialogView.findViewById(R.id.addCategoryButton);
         RecyclerView categoriesList = dialogView.findViewById(R.id.categoriesList);
 
-        // Initialize categories list and adapter
-        categories = new ArrayList<>();
-        categoryAdapter = new CategoryAdapter(categories, category -> editCategory(category));
+        categoryAdapterManage = new CategoryAdapter(categories, category -> editCategory(category));
 
         // Set up RecyclerView for categories in dialog
         categoriesList.setLayoutManager(new LinearLayoutManager(this));
-        categoriesList.setAdapter(categoryAdapter);
+        categoriesList.setAdapter(categoryAdapterManage);
 
         // Fetch categories from the database
         fetchCategories();
@@ -255,7 +200,7 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
                         categories.add(finalNewCategory);
                         newCategoryEditText.setText("");
                         newDescriptionEditText.setText("");
-                        categoryAdapter.notifyItemInserted(categories.size() - 1); // Notify that a new item was inserted
+                        categoryAdapterManage.notifyItemInserted(categories.size() - 1);
                     }
 
                     @Override
@@ -321,7 +266,7 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
                 // Input validation
                 category.setName(newName);
                 category.setDescription(newDescription);
-                categoryAdapter.notifyDataSetChanged(); // Update the RecyclerView
+                categoryAdapterManage.notifyDataSetChanged(); // Update the RecyclerView
                 db.updateCategory(category);
                 // Save changes to the database if necessary
                 dialog.dismiss();
@@ -363,6 +308,10 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
         return isValid; // Return the validation result
     }
 
+    private void selectCategory(Category category) {
+        listingAdapter.updateList(filterListings(allListings, category));
+    }
+
 
 
     /**
@@ -373,8 +322,16 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
             @Override
             public void onSuccess() {
                 categories.clear();
+                filterCategories.clear();
+                filterCategories.add(dummy);
                 categories.addAll((List<Category>) results.get("categories"));
-                categoryAdapter.notifyDataSetChanged();
+                filterCategories.addAll((List<Category>) results.get("categories"));
+                if (categoryAdapterManage!=null) {
+                    categoryAdapterManage.notifyDataSetChanged();
+                }
+
+                spinnerAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -402,7 +359,7 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
                             int position = categories.indexOf(category);
                             if (position >= 0) {
                                 categories.remove(position);
-                                categoryAdapter.notifyItemRemoved(position); // Notify that an item was removed
+                                categoryAdapterManage.notifyItemRemoved(position); // Notify that an item was removed
                             }
                             dialog.dismiss();
                         }
@@ -423,99 +380,34 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
     }
 
 
-    /**
-     * Displays a dialog for filtering listings.
-     */
-    private void showFilterDialog() {
-        // Fetch categories from the database
-        filterStart = null;
-        filterEnd = null;
-        filterCategory = null;
+    public List<Listing> filterListings(List<Listing> listings, Category category) {
+        if (category == dummy) {
+            Log.d("filterListings", "Filtering listings for category: " + category);
+            Log.d("filterListings", "Returning og list with " + listings.size() + " items");
+            return listings;
+        }
+        Log.d("filterListings", "Filtering listings for category: " + category);
 
-        fetchCategories();
-        // Inflate the dialog layout
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.filter_dialog, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog dialog = builder.create();
+        // Make a copy of the listings list to avoid modifying the original list
+        ArrayList<Listing> filtered = new ArrayList<>(listings);
 
-        // Initialize dialog views
-        startDateButton = dialogView.findViewById(R.id.startDateButton);
-        endDateButton = dialogView.findViewById(R.id.endDateButton);
-        // Spinner and category list setup
-        Spinner categorySpinner = dialogView.findViewById(R.id.categorySpinner);
-        Log.d(TAG, "Available categories: " + categories);
+        // Log the size of the original list
+        Log.d("filterListings", "Original list size: " + listings.size());
 
-        List<Category> spinnerCategories = new ArrayList<>();
-        Category dummy = new Category("Any category", "");
-        spinnerCategories.add(dummy); // Default selection
-
-        ArrayAdapter<Category> categoryAdapterFilter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerCategories) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                textView.setText(spinnerCategories.get(position).getName()); // Set category name
-                return view;
+        // Perform filtering
+        filtered.removeIf(l -> {
+            boolean match = l.isMatch(category);
+            if (!match) {
+                // Log each item that doesn't match the category
+                Log.d("filterListings", "Listing does not match category: " + l);
             }
-
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                textView.setText(spinnerCategories.get(position).getName()); // Set category name
-                return view;
-            }
-        };
-
-        categoryAdapterFilter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(categoryAdapterFilter);
-
-
-        // Log categories after setting up the adapter
-
-
-        // Set OnClickListener for Start Date Button
-        startDateButton.setOnClickListener(v -> {
-            try {
-                showDatePicker(true); // true indicates it's for start date
-                Log.d(TAG, "Start date button clicked");
-            } catch (Exception e) {
-                Log.e(TAG, "Error showing start date picker: " + e.getMessage());
-                Toast.makeText(this, "Error selecting start date.", Toast.LENGTH_SHORT).show();
-            }
+            return !match;
         });
 
-        // Set OnClickListener for End Date Button
-        endDateButton.setOnClickListener(v -> {
-            try {
-                showDatePicker(false); // false indicates it's for end date
-                Log.d(TAG, "End date button clicked");
-            } catch (Exception e) {
-                Log.e(TAG, "Error showing end date picker: " + e.getMessage());
-                Toast.makeText(this, "Error selecting end date.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Log the size of the filtered list
+        Log.d("filterListings", "Filtered list size: " + filtered.size());
 
-        // Set OnClickListener for Apply Filter Button
-        Button applyFilterButton = dialogView.findViewById(R.id.applyFilterButton);
-        applyFilterButton.setOnClickListener(v -> {
-
-            try {
-                filterCategory = !categorySpinner.getSelectedItem().equals(dummy) ? categorySpinner.getSelectedItem().toString() : "";
-                filterStart = startDate;
-                filterEnd = endDate;
-                // Log the selected filter category
-                Log.d(TAG, "Selected filter category: " + filterCategory);
-                dialog.dismiss();
-            } catch (Exception e) {
-                Log.e(TAG, "Error applying filter: " + e.getMessage());
-                Toast.makeText(this, "Error applying filter. Please try again.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Show the dialog
-        dialog.show();
-        Log.d(TAG, "Filter dialog shown");
+        return filtered;
     }
+
 }

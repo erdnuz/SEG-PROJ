@@ -46,8 +46,8 @@ public class Lessor extends User {
      * @param rentalFee   the rental fee for the item.
      * @return the newly created Listing object.
      */
-    public Listing createListing(String itemName, String description, Category category, double rentalFee) {
-        Listing newListing = new Listing(category, description, itemName, this, rentalFee);
+    public Listing createListing(String itemName, String description, Category category, double rentalFee, Long startDate, Long endDate) {
+        Listing newListing = new Listing(category, description, itemName, this, rentalFee, startDate, endDate);
         DatabaseHelper db = DatabaseHelper.getInstance();
         db.createListing(newListing);
         Log.d(TAG, "New listing created: " + newListing);
@@ -55,16 +55,14 @@ public class Lessor extends User {
     }
 
     /**
-     * Manages the availability of an item by setting start and end dates of availability.
+     * Deletes a listing for content moderation purposes.
      *
-     * @param itemId         the ID of the item to manage.
-     * @param availableFrom  the start date of the availability period.
-     * @param availableUntil the end date of the availability period.
+     * @param listing the listing to delete.
      */
-    public void manageAvailability(int itemId, LocalDate availableFrom, LocalDate availableUntil) {
-        Log.d(TAG, "Managing availability for item ID: " + itemId +
-                ", Available from: " + availableFrom + ", Available until: " + availableUntil);
-        // Implement availability management logic here
+    public void deleteListing(Listing listing) {
+        DatabaseHelper db = DatabaseHelper.getInstance();
+        db.deleteListing(listing);
+        Log.d(TAG, "Listing deleted: " + listing.getTitle());
     }
 
     /**

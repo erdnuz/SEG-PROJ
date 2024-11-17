@@ -7,7 +7,6 @@ import com.example.rentify.models.Category;
 import com.example.rentify.models.Lessor;
 import com.example.rentify.models.Listing;
 import com.example.rentify.models.Renter;
-import com.example.rentify.models.Slot;
 import com.example.rentify.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -362,7 +361,9 @@ public class DatabaseHelper {
                             if (listing != null) {
                                 String listingId = snapshot.getKey();
                                 listing.setId(listingId);
-                                listings.add(listing);
+                                if (listing.getLessor().getEnabled()) {
+                                    listings.add(listing);
+                                }
                             } else {
                                 Log.w(TAG, "Listing is null for snapshot: " + snapshot.getKey());
                             }
@@ -420,22 +421,6 @@ public class DatabaseHelper {
                 callback.onError(databaseError.toException());
             }
         });
-    }
-
-
-    public List<Listing> filterListings(List<Listing> listings, String category, Slot availability, String title) {
-        List<Listing> filteredListings = new ArrayList<>();
-        if ("Any Category".equals(category) || category.isEmpty()) {
-            category = null;
-        }
-        for (Listing listing : listings) {
-
-            if (listing.isMatch(category, availability, title)) {
-                filteredListings.add(listing);
-            }
-        }
-
-        return filteredListings;
     }
 
 

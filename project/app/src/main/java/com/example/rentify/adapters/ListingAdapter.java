@@ -1,5 +1,6 @@
 package com.example.rentify.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rentify.R;
 import com.example.rentify.models.Listing;
+
 import java.util.List;
 
 public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingViewHolder> {
+    private static final String TAG = "ListingAdapter"; // Tag for logging
     private final List<Listing> listings;
     private final OnListingClickListener onListingClickListener;
 
@@ -23,7 +26,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
     public void updateList(List<Listing> newListings) {
         listings.clear();
         listings.addAll(newListings);
-        notifyDataSetChanged(); // Notify the adapter that the data has changed
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -37,11 +40,15 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
     @Override
     public void onBindViewHolder(@NonNull ListingViewHolder holder, int position) {
         Listing listing = listings.get(position);
+
         holder.titleTextView.setText(listing.getTitle());
         holder.descriptionTextView.setText(listing.getDescription());
 
         // Set click listener to return the Listing object
-        holder.itemView.setOnClickListener(v -> onListingClickListener.onListingClick(listing));
+        holder.itemView.setOnClickListener(v -> {
+            Log.d(TAG, "Listing clicked: " + listing.getTitle());
+            onListingClickListener.onListingClick(listing);
+        });
     }
 
     @Override
@@ -64,4 +71,3 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
         }
     }
 }
-

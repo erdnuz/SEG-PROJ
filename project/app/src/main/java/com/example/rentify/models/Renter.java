@@ -1,6 +1,8 @@
 package com.example.rentify.models;
 
 import android.util.Log;
+import android.widget.Toast;
+
 import java.time.LocalDate;
 
 /**
@@ -34,28 +36,12 @@ public class Renter extends User {
         Log.d(TAG, "Renter instance created with parameters: " + toString());
     }
 
-    /**
-     * Searches for items available for rent within a specified category.
-     *
-     * @param category the category to search for.
-     */
-    public void searchItems(String category) {
-        Log.d(TAG, "Searching for items in category: " + category);
-        // Implement search logic here
+    public void createRequest(Listing listing) {
+        Request requests = new Request();
+
     }
 
-    /**
-     * Submits a rental request for a specified item, with a defined rental period.
-     *
-     * @param itemId      the ID of the item to rent.
-     * @param startRental the start date of the rental period.
-     * @param endRental   the end date of the rental period.
-     */
-    public void submitRentalRequest(int itemId, LocalDate startRental, LocalDate endRental) {
-        Log.d(TAG, "Submitting rental request for item ID: " + itemId +
-                ", from: " + startRental + " to: " + endRental);
-        // Implement rental request logic here
-    }
+
 
     /**
      * Provides a string representation of the Renter object, including the role and name.

@@ -1,9 +1,12 @@
 package com.example.rentify.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.util.Log;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Listing implements Serializable {
 	private String id;
@@ -12,45 +15,29 @@ public class Listing implements Serializable {
 	private String title;
 	private Lessor lessor;
 	private double price;
-	private Availability availability;
+	private long startDate, endDate;
 
 	// Constructor
 	public Listing() {
-		this.availability = new Availability();
+
 	}
 
-	public Listing(Category category, String description, String title, Lessor lessor, double price) {
+	public Listing(Category category, String description, String title, Lessor lessor, double price, Long startDate, Long endDate) {
 		this.category = category;
 		this.description = description;
 		this.title = title;
 		this.lessor = lessor;
 		this.price = price;
-		this.availability = new Availability();
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
-	public Listing(Category category, String description, String title, Lessor lessor, double price, Availability ava) {
-		this.category = category;
-		this.description = description;
-		this.title = title;
-		this.lessor = lessor;
-		this.price = price;
-		this.availability = ava;
+	public boolean isAvailable(Long startDate, Long endDate) {
+		return (this.startDate<=startDate && this.endDate>=endDate);
 	}
 
-	// Methods
-	public void reserveAvailability(Slot slot) {
-		availability.reserve(slot);
-	}
-
-	public boolean isAvailable(Slot slot) {
-		return availability.isAvailable(slot);
-	}
-
-	public boolean isMatch(String category, Slot slot, String title) {
-		boolean matchesCategory = (category == null || category.equals(this.category));
-		boolean matchesTitle = (title == null || title.toLowerCase().contains(title.toLowerCase()));
-		boolean matchesAvailability = (availability == null || isAvailable(slot));
-		return matchesAvailability && matchesCategory && matchesTitle;
+	public boolean isMatch(Category category) {
+		return (category == null || category.equals(this.category));
 	}
 
 	// Setters and getters
@@ -102,11 +89,38 @@ public class Listing implements Serializable {
 		this.price = price;
 	}
 
-	public Availability getAvailability() {
-		return availability;
+
+	public String getStartFormatted() {
+		return formatDate(startDate);
 	}
 
-	public void setAvailability(Availability ava) {
-		this.availability = ava;
+	public String getEndFormatted() {
+		return formatDate(endDate);
+	}
+
+	private String formatDate(long dateLong) {
+		// Extract year, month, and day using modulus and division
+		int year = (int) (dateLong / 10000);          // Extract year
+		int month = (int) ((dateLong % 10000) / 100); // Extract month
+		int day = (int) (dateLong % 100);            // Extract day
+
+		// Format the date into "dd/MM/yy"
+		return day + "/" + month + "/" + year % 100;
+	}
+
+	public Long getStartDate() {
+		return this.startDate;
+	}
+
+	public Long getEndDate() {
+		return this.endDate;
+	}
+
+	public void setStartDate(Long startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(Long endDate) {
+		this.endDate = endDate;
 	}
 }

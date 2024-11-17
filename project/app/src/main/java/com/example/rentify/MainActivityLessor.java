@@ -1,5 +1,6 @@
 package com.example.rentify;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,8 +35,11 @@ import com.example.rentify.util.QueryCallback;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * MainActivityLessor handles the user interface for Lessors in the Rentify application.
@@ -46,7 +50,7 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
     private static final String TAG = "MainActivityLessor"; // Tag for logging
 
     private LinearLayout createListingLayout;
-    private Button cancelButton, submitButton, uploadImageButton;
+    private Button cancelButton, submitButton, uploadImageButton, startDateButton, endDateButton;
     private TextView numberOfListings, numberOfRequests;
     private static Lessor intentUser;
     private Uri selectedImageUri;
@@ -54,6 +58,7 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
     private Spinner categorySpinner;
     private List<Listing> listings;
     private ListingAdapter listingAdapter;
+    private Long startDate, endDate;
 
     public static void setIntentUser(Lessor intent) {
         intentUser = intent;
@@ -161,6 +166,63 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
         });
     }
 
+    private void showDatePicker(boolean isStartDate) {
+        final Calendar calendar = Calendar.getInstance();
+
+        // Create a DatePickerDialog limited to today or later
+        DatePickerDialog datePicker = new DatePickerDialog(
+                this,
+                (view, year, month, dayOfMonth) -> {
+                    calendar.set(year, month, dayOfMonth);
+
+                    // Convert the selected date to YYYYMMDD format only after selection
+                    SimpleDateFormat longFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                    SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+                    String formattedDate = longFormat.format(calendar.getTime());
+                    long dateAsLong = Long.parseLong(formattedDate);
+
+                    if (isStartDate) {
+                        startDate = dateAsLong;
+                        startDateButton.setText(displayFormat.format(calendar.getTime()));
+                    } else {
+                        endDate = dateAsLong;
+                        endDateButton.setText(displayFormat.format(calendar.getTime()));
+                    }
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+
+        // Set min and max dates directly using milliseconds
+        if (isStartDate) {
+            datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
+            if (endDate != null) {
+                datePicker.getDatePicker().setMaxDate(convertToMillis(endDate));
+            }
+        } else {
+            if (startDate != null) {
+                datePicker.getDatePicker().setMinDate(convertToMillis(startDate));
+            } else {
+                datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
+            }
+        }
+
+        datePicker.show();
+    }
+
+    // Helper to convert YYYYMMDD to milliseconds
+    private long convertToMillis(long yyyymmddDate) {
+        int year = (int) (yyyymmddDate / 10000);
+        int month = (int) ((yyyymmddDate % 10000) / 100) - 1;
+        int day = (int) (yyyymmddDate % 100);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day, 0, 0, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
+    }
+
 
     /**
      * Displays a dialog for creating a new listing.
@@ -216,6 +278,31 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
             openImageChooser();
         });
 
+        startDateButton = dialogView.findViewById(R.id.startDateButton);
+        endDateButton = dialogView.findViewById(R.id.endDateButton);
+
+        // Set OnClickListener for Start Date Button
+        startDateButton.setOnClickListener(v -> {
+            try {
+                showDatePicker(true); // true indicates it's for start date
+                Log.d(TAG, "Start date button clicked");
+            } catch (Exception e) {
+                Log.e(TAG, "Error showing start date picker: " + e.getMessage());
+                Toast.makeText(this, "Error selecting start date.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Set OnClickListener for End Date Button
+        endDateButton.setOnClickListener(v -> {
+            try {
+                showDatePicker(false); // false indicates it's for end date
+                Log.d(TAG, "End date button clicked");
+            } catch (Exception e) {
+                Log.e(TAG, "Error showing end date picker: " + e.getMessage());
+                Toast.makeText(this, "Error selecting end date.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
         // Create the dialog
@@ -246,6 +333,11 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
                 return;
             }
 
+            if (startDate==null || endDate == null) {
+                Toast.makeText(this, "Start date and end date are required.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             double price;
             try {
                 price = Double.parseDouble(priceStr);
@@ -254,9 +346,10 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
                 return;
             }
 
+
             Category category = (Category) categorySpinner.getSelectedItem();
 
-            Listing listing = lessor.createListing(title, description, category, price);
+            Listing listing = lessor.createListing(title, description, category, price, startDate, endDate);
 
             String listingId = listing.getId();
             Log.d(TAG, "Creating listing with ID: " + listingId);
@@ -267,6 +360,7 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
                 Toast.makeText(MainActivityLessor.this, "Listing created without an image.", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Listing created without an image");
             }
+            updateListingList();
             dialog.dismiss();
         });
 

@@ -59,6 +59,12 @@
 
         <!-- TextView for Category -->
         <TextView
+            android:id="@+id/availabilityTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Availability" />
+
+        <TextView
             android:id="@+id/categoryView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
