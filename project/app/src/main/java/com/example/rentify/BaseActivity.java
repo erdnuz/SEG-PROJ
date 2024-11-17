@@ -17,6 +17,8 @@ import com.example.rentify.models.Listing;
 import com.example.rentify.models.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -91,28 +93,43 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void setUpAvatar(ImageView toPopulate, User user) {
         if (user != null) {
-            FirebaseStorage.getInstance().getReference()
-                    .child("avatars")
-                    .child(user.getId() + ".jpg")
-                    .getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+            String avatarUrl = "avatars/" + user.getId() + ".jpg"; // Path in Firebase Storage
+
+            // Attempt to load from Picasso cache first
+            Picasso.get().load(avatarUrl)
+                    .networkPolicy(NetworkPolicy.OFFLINE) // Load from cache first
+                    .placeholder(R.drawable.def_avatar)
+                    .error(R.drawable.error_avatar)
+                    .into(toPopulate, new Callback() {
                         @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get()
-                                    .load(uri)
-                                    .placeholder(R.drawable.def_avatar)
-                                    .error(R.drawable.error_avatar)
-                                    .into(toPopulate);
+                        public void onSuccess() {
+                            // Successfully loaded from cache or network
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        log('e', "Error fetching avatar URL: " + e.getMessage());
-                        toPopulate.setImageResource(R.drawable.error_avatar);
+
+                        @Override
+                        public void onError(Exception e) {
+                            // If not found in cache, load from Firebase Storage
+                            FirebaseStorage.getInstance().getReference()
+                                    .child(avatarUrl)
+                                    .getDownloadUrl()
+                                    .addOnSuccessListener(uri -> {
+                                        Picasso.get()
+                                                .load(uri)
+                                                .placeholder(R.drawable.def_avatar)
+                                                .error(R.drawable.error_avatar)
+                                                .into(toPopulate);
+                                    })
+                                    .addOnFailureListener(fail -> {
+                                        log('e', "Error fetching avatar URL: " + fail.getMessage());
+                                        toPopulate.setImageResource(R.drawable.error_avatar);
+                                    });
+                        }
                     });
         } else {
             toPopulate.setImageResource(R.drawable.error_avatar);
         }
     }
+
 
     protected void setUpListing(ImageView toPopulate, Listing listing, boolean hideOnFail) {
         if (listing != null) {

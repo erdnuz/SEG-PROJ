@@ -43,7 +43,6 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
     private List<Listing> allListings = new ArrayList<>();
     private Button getAllUsers;
     private Category dummy;
-    private String search;
     private Category selectedCategory;
 
     @Override

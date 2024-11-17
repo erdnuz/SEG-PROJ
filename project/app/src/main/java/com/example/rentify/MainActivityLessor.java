@@ -59,6 +59,7 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
     private List<Listing> listings;
     private ListingAdapter listingAdapter;
     private Long startDate, endDate;
+    private TextView titleTextView;
 
     public static void setIntentUser(Lessor intent) {
         intentUser = intent;
@@ -95,6 +96,7 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
         createListingLayout = findViewById(R.id.createListingLayout);
         numberOfListings = findViewById(R.id.numberOfListings);
         numberOfRequests = findViewById(R.id.numberOfRequests);
+        titleTextView = findViewById(R.id.titleTextView);
 
         db.getRequestCountByLessor(intentUser, new QueryCallback() {
 
@@ -118,16 +120,7 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
         Log.d(TAG, "Current user: " + currentUser);
         Log.d(TAG, "Intent user: " + intentUser);
 
-        // Determine visibility based on user type
-        if (currentUser != null && intentUser!=null && currentUser.getEmail().equals(intentUser.getEmail())) {
-            createListingLayout.setVisibility(View.VISIBLE);
-            createListingLayout.setOnClickListener(v -> {
-                Log.d(TAG, "Creating listing dialog opened");
-                showCreateListingDialog((Lessor) currentUser);
-            });
-        } else {
-            createListingLayout.setVisibility(View.GONE);
-        }
+
 
         RecyclerView listingsRecyclerView = findViewById(R.id.listingsRecyclerView);
         listingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -141,6 +134,18 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
 
         // Fetch all listings and update the adapter on success
         updateListingList();
+        // Determine visibility based on user type
+        if (currentUser.equals(intentUser)) {
+            createListingLayout.setVisibility(View.VISIBLE);
+            createListingLayout.setOnClickListener(v -> {
+                Log.d(TAG, "Creating listing dialog opened");
+                showCreateListingDialog((Lessor) currentUser);
+            });
+        } else {
+            titleTextView.setText(intentUser.fullName());
+            createListingLayout.setVisibility(View.GONE);
+            findViewById(R.id.pendingLayout).setVisibility(View.GONE);
+        }
     }
 
     @Override
