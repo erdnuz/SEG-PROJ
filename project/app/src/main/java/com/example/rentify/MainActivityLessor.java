@@ -96,6 +96,18 @@ public class MainActivityLessor extends BaseActivity implements ListingAdapter.O
         numberOfListings = findViewById(R.id.numberOfListings);
         numberOfRequests = findViewById(R.id.numberOfRequests);
 
+        db.getRequestCountByLessor(intentUser, new QueryCallback() {
+
+            @Override
+            public void onSuccess() {
+                numberOfRequests.setText(String.valueOf(results.get("requestCount")));
+            }
+
+            @Override
+            public void onError(Exception err) {
+                numberOfRequests.setText(-1);
+            }
+        });
         // Set padding for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

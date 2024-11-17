@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.example.rentify.util.QueryCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.text.TextWatcher;
 
 public class ListingViewHome extends BaseActivity implements ListingAdapter.OnListingClickListener, CategoryAdapter.CategoryClickListener {
     private static final String TAG = "ListingViewHome"; // For logging
@@ -41,6 +43,8 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
     private List<Listing> allListings = new ArrayList<>();
     private Button getAllUsers;
     private Category dummy;
+    private String search;
+    private Category selectedCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,7 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
 
 
         categories = new ArrayList<>();
+
         filterCategories = new ArrayList<>();
         Spinner categorySpinner = findViewById(R.id.categorySpinner);
         spinnerAdapter = new ArrayAdapter<>(
@@ -97,17 +102,19 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
         categorySpinner.setAdapter(spinnerAdapter);
 
         fetchCategories();
+        selectedCategory = dummy;
         updateListingList();
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // Retrieve the selected category
-                Category selectedCategory = (Category) parent.getItemAtPosition(position);
+                selectedCategory = (Category) parent.getItemAtPosition(position);
 
                 // Log the selected category and update the listing
                 Log.d(TAG, "Selected category: " + selectedCategory.getName());
-                selectCategory(selectedCategory);
+                filter(selectedCategory,
+                        null);
             }
 
             @Override
@@ -122,6 +129,34 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
             Intent intent = new Intent(this, AllUsersActivity.class);
             startActivity(intent);
         });
+
+        EditText searchQuery = findViewById(R.id.searchQuery);
+
+// Set a listener to handle text changes
+        searchQuery.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int after) {
+                // Optional: Handle text before change if needed (e.g., track what was deleted)
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
+                // Only filter listings when a character is typed (not empty)
+                String searchText = searchQuery.getText().toString().trim();
+                if (!searchText.isEmpty()) {
+                    filter(selectedCategory, searchText);
+                } else {
+                    filter(selectedCategory, null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // After text has been changed (useful for additional actions)
+            }
+        });
+
+
     }
 
     protected void updateListingList() {
@@ -308,8 +343,8 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
         return isValid; // Return the validation result
     }
 
-    private void selectCategory(Category category) {
-        listingAdapter.updateList(filterListings(allListings, category));
+    private void filter(Category category, String search) {
+        listingAdapter.updateList(filterListings(allListings, category, search));
     }
 
 
@@ -380,34 +415,28 @@ public class ListingViewHome extends BaseActivity implements ListingAdapter.OnLi
     }
 
 
-    public List<Listing> filterListings(List<Listing> listings, Category category) {
-        if (category == dummy) {
-            Log.d("filterListings", "Filtering listings for category: " + category);
-            Log.d("filterListings", "Returning og list with " + listings.size() + " items");
-            return listings;
-        }
-        Log.d("filterListings", "Filtering listings for category: " + category);
+    public List<Listing> filterListings(List<Listing> listings, Category category, String search) {
 
         // Make a copy of the listings list to avoid modifying the original list
         ArrayList<Listing> filtered = new ArrayList<>(listings);
-
         // Log the size of the original list
         Log.d("filterListings", "Original list size: " + listings.size());
 
         // Perform filtering
         filtered.removeIf(l -> {
-            boolean match = l.isMatch(category);
-            if (!match) {
-                // Log each item that doesn't match the category
-                Log.d("filterListings", "Listing does not match category: " + l);
+            boolean match;
+            if (category == dummy) {
+                match = l.isMatch(null, search);
+            } else {
+                match = l.isMatch(category, search);
             }
             return !match;
         });
+
 
         // Log the size of the filtered list
         Log.d("filterListings", "Filtered list size: " + filtered.size());
 
         return filtered;
     }
-
 }

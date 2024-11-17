@@ -61,8 +61,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:inputType="text"
-                        android:text="Search" />
+                        android:hint="Search for items"
+                        android:inputType="text" />
 
                     <!-- RecyclerView for Listings -->
                     <androidx.recyclerview.widget.RecyclerView

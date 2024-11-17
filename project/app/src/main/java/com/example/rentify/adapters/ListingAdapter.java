@@ -67,7 +67,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
         public ListingViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleView);
-            descriptionTextView = itemView.findViewById(R.id.descriptionView);
+            descriptionTextView = itemView.findViewById(R.id.dateView);
         }
     }
 }

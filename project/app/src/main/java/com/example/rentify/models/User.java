@@ -55,9 +55,11 @@ public class User implements Serializable {
         db.updateUser(this);
     }
 
-    public boolean equalTo(User other) {
-        if (other==null) return false;
-        return other.getId().equals(id);
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof User)) return false;
+        User u = (User) other;
+        return u.getId().equals(id);
     }
 
     @Override

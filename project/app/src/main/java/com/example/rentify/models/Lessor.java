@@ -54,6 +54,16 @@ public class Lessor extends User {
         return newListing;
     }
 
+    public void approveRequest(Request r) {
+        r.setStatus(1);
+        DatabaseHelper.getInstance().updateRequest(r);
+    }
+
+    public void rejectRequest(Request r) {
+        r.setStatus(-1);
+        DatabaseHelper.getInstance().updateRequest(r);
+    }
+
     /**
      * Deletes a listing for content moderation purposes.
      *

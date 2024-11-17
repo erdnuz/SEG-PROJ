@@ -7,8 +7,10 @@ import com.example.rentify.models.Category;
 import com.example.rentify.models.Lessor;
 import com.example.rentify.models.Listing;
 import com.example.rentify.models.Renter;
+import com.example.rentify.models.Request;
 import com.example.rentify.models.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -398,7 +400,7 @@ public class DatabaseHelper {
                     // Check if the snapshot value is not null and is of the expected type
                     if (snapshot.getValue() instanceof Map) {
                         try {
-                            if (target.equalTo(snapshot.child("lessor").getValue(Lessor.class))) {
+                            if (target.equals(snapshot.child("lessor").getValue(Lessor.class))) {
                                 String listingId = snapshot.getKey();
                                 Listing listing = snapshot.getValue(Listing.class);
                                 listing.setId(listingId);
@@ -453,7 +455,7 @@ public class DatabaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot listingSnapshot : dataSnapshot.getChildren()) {
                     Lessor lessor1 = listingSnapshot.child("lessor").getValue(Lessor.class);
-                    if (lessor.equalTo(lessor1)) {
+                    if (lessor.equals(lessor1)) {
                         listingSnapshot.getRef().removeValue();
                     }
                 }
@@ -469,4 +471,153 @@ public class DatabaseHelper {
     public void deleteListing(Listing listing) {
         dbRef.child("listings").child(listing.getId()).removeValue();
     }
+
+    /** Request methods**/
+    public void createRequest(Request r, QueryCallback callback) {
+        getRequestsByRenter(r.getRenter(), new QueryCallback() {
+            @Override
+            public void onSuccess() {
+                List<Request> requests = (List<Request>) results.get("requests");
+                for (Request request: requests) {
+                    if (r.equals(request)) {
+                        callback.onError(new IllegalStateException("Request already exists."));
+                        return;
+                    }
+                }
+                String requestId = dbRef.child("requests").push().getKey();
+                r.setId(requestId);
+                dbRef.child("requests").child(requestId).setValue(r);
+                callback.onSuccess();
+
+            }
+
+            @Override
+            public void onError(Exception err) {
+                callback.onError(new RuntimeException("Unknown error in request fetch"));
+            }
+        });
+
+    }
+
+    public void updateRequest(Request r) {
+        dbRef.child("requests").child(r.getId()).setValue(r);
+    }
+
+    public void getRequestsByListing(Listing target, QueryCallback callback) {
+        Query query = dbRef.child("requests");
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Request> requests = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Check if the snapshot value is not null and is of the expected type
+                    if (snapshot.getValue() instanceof Map) {
+                        try {
+                            Request request = snapshot.getValue(Request.class);
+                            if (request != null && target.equals(request.getListing())) {
+                                String requestId = snapshot.getKey();
+                                request.setId(requestId);
+                                requests.add(request);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing request for snapshot: " + snapshot.getKey(), e);
+                        }
+                    } else {
+                        Log.w(TAG, "Unexpected data type for request at snapshot: " + snapshot.getKey() + ", type: " + snapshot.getValue().getClass().getSimpleName());
+                    }
+                }
+
+                callback.results.put("requests", requests);
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onError(databaseError.toException());
+            }
+        });
+    }
+
+    public void getRequestsByRenter(Renter target, QueryCallback callback) {
+        Query query = dbRef.child("requests");
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Request> requests = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Check if the snapshot value is not null and is of the expected type
+                    if (snapshot.getValue() instanceof Map) {
+                        try {
+                            Request request = snapshot.getValue(Request.class);
+                            if (request != null && target.equals(request.getRenter())) {
+                                String requestId = snapshot.getKey();
+                                request.setId(requestId);
+                                requests.add(request);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing request for snapshot: " + snapshot.getKey(), e);
+                        }
+                    } else {
+                        Log.w(TAG, "Unexpected data type for request at snapshot: " + snapshot.getKey() + ", type: " + snapshot.getValue().getClass().getSimpleName());
+                    }
+                }
+
+                callback.results.put("requests", requests);
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onError(databaseError.toException());
+            }
+        });
+    }
+
+    public void getRequestCountByLessor(Lessor target, QueryCallback callback) {
+        Query query = dbRef.child("requests");
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int requestCount = 0;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Check if the snapshot value is not null and is of the expected type
+                    if (snapshot.getValue() instanceof Map) {
+                        try {
+                            Request request = snapshot.getValue(Request.class);
+                            if (request != null && request.getStatus() == 0 && request.getListing() != null &&
+                                    target.equals(request.getListing().getLessor())) {
+                                requestCount++;
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing request for snapshot: " + snapshot.getKey(), e);
+                        }
+                    } else {
+                        Log.w(TAG, "Unexpected data type for request at snapshot: " + snapshot.getKey() + ", type: " + snapshot.getValue().getClass().getSimpleName());
+                    }
+                }
+
+                // Return the count through the callback
+                callback.results.put("requestCount", requestCount);
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onError(databaseError.toException());
+            }
+        });
+    }
+
+    public void deleteRequest(Request request) {
+        dbRef.child("requests").child(request.getId()).removeValue();
+    }
+
+
+
 }

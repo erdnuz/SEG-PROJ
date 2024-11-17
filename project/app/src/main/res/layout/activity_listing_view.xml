@@ -73,7 +73,7 @@
 
         <!-- TextView for Description -->
         <TextView
-            android:id="@+id/descriptionView"
+            android:id="@+id/dateView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"

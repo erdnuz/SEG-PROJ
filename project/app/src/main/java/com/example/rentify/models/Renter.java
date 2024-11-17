@@ -3,7 +3,13 @@ package com.example.rentify.models;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.rentify.util.DatabaseHelper;
+import com.example.rentify.util.QueryCallback;
+
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * The Renter class represents a user who rents items from the platform.
@@ -36,9 +42,18 @@ public class Renter extends User {
         Log.d(TAG, "Renter instance created with parameters: " + toString());
     }
 
-    public void createRequest(Listing listing) {
-        Request requests = new Request();
+    public void createRequest(Listing listing, QueryCallback callback) {
+        SimpleDateFormat longFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        String formattedDate = longFormat.format(calendar.getTime());
+        long dateAsLong = Long.parseLong(formattedDate);
 
+        Request request = new Request(dateAsLong, this, listing);
+        DatabaseHelper.getInstance().createRequest(request, callback);
+    }
+
+    public void cancelRequest(Request r) {
+        DatabaseHelper.getInstance().deleteRequest(r);
     }
 
 

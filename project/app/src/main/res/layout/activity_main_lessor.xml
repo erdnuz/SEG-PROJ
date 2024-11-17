@@ -89,7 +89,7 @@
                         android:layout_weight="1"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Current Requests"
+                        android:text="Pending Requests"
                         android:textColor="@color/on_surface"
                         android:textSize="18sp" />
 

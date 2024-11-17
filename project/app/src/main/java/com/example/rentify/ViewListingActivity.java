@@ -90,7 +90,7 @@ public class ViewListingActivity extends BaseActivity {
         titleView = findViewById(R.id.titleView);
         categoryView = findViewById(R.id.categoryView);
         priceView = findViewById(R.id.priceView);
-        descriptionView = findViewById(R.id.descriptionView);
+        descriptionView = findViewById(R.id.dateView);
         lessorView = findViewById(R.id.lessorView);
         image = findViewById(R.id.listingImageView);
         makeRequest = findViewById(R.id.makeRequest);
@@ -104,7 +104,7 @@ public class ViewListingActivity extends BaseActivity {
     }
 
     private void loadVisibility() {
-        if (listing.getLessor().equalTo(currentUser)) {
+        if (listing.getLessor().equals(currentUser)) {
             manageControls.setVisibility(View.VISIBLE);
             editListing.setVisibility(View.VISIBLE);
             viewRequests.setVisibility(View.VISIBLE);
@@ -168,7 +168,19 @@ public class ViewListingActivity extends BaseActivity {
             return;
         }
         Renter renter = (Renter) currentUser;
-        renter.createRequest(listing);
+        renter.createRequest(listing, new QueryCallback() {
+
+            @Override
+            public void onSuccess() {
+                logToast('d', "Request created");
+                finish();
+            }
+
+            @Override
+            public void onError(Exception err) {
+                logToast('d', "You still have a pending request");
+            }
+        });
     }
 
     private void deleteListing() {

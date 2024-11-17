@@ -110,7 +110,7 @@ public class ProfileActivity extends BaseActivity {
      * Only visible if the current user is an admin.
      */
     private void setupAdminControls(User currentUser, User intentUser) {
-        if ("ADMIN".equals(currentUser.getRole()) && !currentUser.equalTo(intentUser)) {
+        if ("ADMIN".equals(currentUser.getRole()) && !currentUser.equals(intentUser)) {
             adminControlsLayout.setVisibility(View.VISIBLE);
             Admin admin = (Admin) currentUser;
             idTextView.setVisibility(View.VISIBLE);

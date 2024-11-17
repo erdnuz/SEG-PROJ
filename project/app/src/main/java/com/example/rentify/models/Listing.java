@@ -32,12 +32,19 @@ public class Listing implements Serializable {
 		this.endDate = endDate;
 	}
 
-	public boolean isAvailable(Long startDate, Long endDate) {
-		return (this.startDate<=startDate && this.endDate>=endDate);
-	}
+	public boolean isMatch(Category category, String search) {
+		// If category is specified, check if it matches the current object's category
+		if (category != null && !category.equals(this.category)) {
+			return false;
+		}
 
-	public boolean isMatch(Category category) {
-		return (category == null || category.equals(this.category));
+		// If search is null or empty, assume it's a match for all listings (if no filtering is needed)
+		if (search == null || search.isEmpty()) {
+			return true;
+		}
+
+		// Combine title and description and check if the search string is contained
+		return (this.title + this.description).toLowerCase().contains(search.toLowerCase());
 	}
 
 	// Setters and getters
@@ -122,5 +129,13 @@ public class Listing implements Serializable {
 
 	public void setEndDate(Long endDate) {
 		this.endDate = endDate;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Listing)) return false;
+		Listing l = (Listing) other;
+		if (!l.getTitle().equals(this.title)) return false;
+		return (l.getLessor().equals(this.lessor));
 	}
 }

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.rentify.models.Renter;
 import com.example.rentify.util.DatabaseHelper;
 import com.example.rentify.models.Listing;
 import com.example.rentify.models.User;
@@ -57,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
 
         requestsView.setOnClickListener(v -> {
+            RequestsActivity.setIntentRenter((Renter) currentUser);
             startActivity(new Intent(this, RequestsActivity.class));
         });
 
