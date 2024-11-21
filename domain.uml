@@ -3,6 +3,9 @@ class User {
   int userId;
   String firstName;
   String lastName;
+  String email;
+  String role;
+  String enabled;
 }
 
 class Admin {
@@ -11,6 +14,7 @@ class Admin {
 
 class Renter {
   isA User;
+  1 -- * Request requests;
 }
 
 class Lessor {
@@ -22,10 +26,15 @@ class Lessor {
 class Listing {
   int listingId;
   String description;
-  int price;
-  boolean hourlyPrice; //Price is charged hourly if true, daily otherwise
+  double price;
+  1 -- 1 Category category;
   1 -- * Request requests;
-  1 -- * AvailabilitySlot availabilitySlots;
+  1 -- * Availability availability;
+}
+
+class Category {
+  String name;
+  String description;
 }
 
 // Association classes
@@ -34,19 +43,13 @@ class Request {
   String message;
   String status;
 }
-
-class Review {
-  int date;
-  int rating;
-  String message;
-  
-  * -- 1 Renter from;
-  * -- 1 Listing to;
+class Availability {
+  1 -- * Slot slots;
 }
 
-class AvailabilitySlot {
-  int start;
-  int end;
+class Slot {
+  long start;
+  long end;
 }
 
 

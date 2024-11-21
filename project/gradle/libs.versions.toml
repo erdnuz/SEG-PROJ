@@ -1,0 +1,45 @@
+[versions]
+agp = "8.5.0"
+firebaseAdmin = "8.1.0"
+firebaseAuth = "23.1.0"
+firebaseBom = "33.5.1"
+firebaseDatabase = "21.0.0"
+firebaseFirestore = "25.1.1"
+firebaseStorage = "21.0.1"
+googleAuthLibraryOauth2Http = "1.16.0"
+imagepicker = "1.0.4"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.9.3"
+constraintlayout = "2.1.4"
+materialdatetimepicker = "4.2.3"
+picasso = "2.71828"
+singledateandtimepicker = "2.1.3"
+
+[libraries]
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-database = { module = "com.google.firebase:firebase-database", version.ref = "firebaseDatabase" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-storage = { module = "com.google.firebase:firebase-storage", version.ref = "firebaseStorage" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }
+imagepicker = { module = "com.github.daltony:ImagePicker", version.ref = "imagepicker" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+materialdatetimepicker = { module = "com.wdullaer:materialdatetimepicker", version.ref = "materialdatetimepicker" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+singledateandtimepicker = { module = "com.github.florent37:singledateandtimepicker", version.ref = "singledateandtimepicker" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+

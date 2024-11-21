@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Rentify</string>
+    <string name="username">Username</string>
+    <string name="login_signup">Login / Sign Up</string>
+    <string name="name_text">Your Name</string>
+    <string name="username_text">basicusername1</string>
+    <string name="edit_profile_text">Edit Profile</string>
+    <string name="id_text">ID: 120412</string>
+    <string name="phone_text">(000) 000 - 0000</string>
+    <string name="role_text">RENTER</string>
+    <string name="email_text">johndoe@gmail.com\n</string>
+    <string name="save_changes_text">Save changes</string>
+    <string-array name="roles">
+        <item>Choose role...</item>
+        <item>RENTER</item>
+        <item>LESSOR</item>
+    </string-array>
+</resources>
