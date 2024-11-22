@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "712563162993",
+    "project_id": "rentify-34",
+    "storage_bucket": "rentify-34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712563162993:android:651674ed7f329dbce300d0",
+        "android_client_info": {
+          "package_name": "com.example.rentify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "712563162993-ijuf4d0t3hgt1lfq7pfbndlg0fdg1978.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rentify",
+            "certificate_hash": "7543d75ce30ca939419485c747ac2ba3bc8754ac"
+          }
+        },
+        {
+          "client_id": "712563162993-rm29nbrfb51dbabn2eem97tvp795v87a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKM5pmMkwhMTKrXi2rWS27qM9S9TI9l88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "712563162993-rm29nbrfb51dbabn2eem97tvp795v87a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
