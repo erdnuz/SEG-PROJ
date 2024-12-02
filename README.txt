@@ -1,4 +1,4 @@
-Team: Justin Lee, Sahara Sammy, Arden McArthur, Elssy Sheja, Ahmed Elseidy
+Team: Justin Lee, Sahara Sammy, Arden McArthur (a.k.a erdnuz), Elssy Sheja, Ahmed Elseidy (a.k.a Dekekona)
 
 Link to the repository: https://github.com/erdnuz/SEG-PROJ/
 
